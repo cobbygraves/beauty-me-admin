@@ -37,6 +37,35 @@
     --sidebar-accent-foreground: oklch(0.212 0.019 322.12);
     --sidebar-border: oklch(0.922 0.005 325.62);
     --sidebar-ring: oklch(0.711 0.019 323.02);
+
+    /* ---- Data-viz tokens ----
+       Categorical slots are assigned in this fixed order and never cycled;
+       the order is what makes the palette colourblind-safe. Derived and
+       validated against the real chart surface — see lib/chart-palette.ts. */
+    --series-1: #a800b7; /* brand magenta */
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #2a78d6;
+    --series-5: #eda100;
+    --series-6: #4a3aa7;
+
+    /* Magnitude ramp: the brand's own single-hue magenta scale, light→dark.
+       The lightest brand step is dropped here because it cannot clear 2:1
+       against a white surface. */
+    --ramp-1: #e12afb;
+    --ramp-2: #c800de;
+    --ramp-3: #a800b7;
+    --ramp-4: #8a0194;
+
+    /* Reserved state colours — never reused as a series. Always shipped with
+       a text label, since two of them sit under 3:1 on a light surface. */
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+
+    --chart-grid: oklch(0.922 0.005 325.62);
+    --chart-axis: oklch(0.711 0.019 323.02);
 }
 
 .dark {
@@ -71,6 +100,30 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.542 0.034 322.5);
+
+    /* Dark is selected, not flipped: the same six hues re-stepped for the dark
+       surface, where all six clear 3:1. */
+    --series-1: #c800de;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #3987e5;
+    --series-5: #c98500;
+    --series-6: #9085e9;
+
+    /* The ramp drops its darkest step here instead of its lightest — on a dark
+       surface it is the dark end that risks disappearing. */
+    --ramp-1: #f4a8ff;
+    --ramp-2: #e12afb;
+    --ramp-3: #c800de;
+    --ramp-4: #a800b7;
+
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+
+    --chart-grid: oklch(1 0 0 / 12%);
+    --chart-axis: oklch(0.542 0.034 322.5);
 }
 
 @theme inline {
@@ -89,6 +142,22 @@
     --color-chart-3: var(--chart-3);
     --color-chart-2: var(--chart-2);
     --color-chart-1: var(--chart-1);
+    --color-series-1: var(--series-1);
+    --color-series-2: var(--series-2);
+    --color-series-3: var(--series-3);
+    --color-series-4: var(--series-4);
+    --color-series-5: var(--series-5);
+    --color-series-6: var(--series-6);
+    --color-ramp-1: var(--ramp-1);
+    --color-ramp-2: var(--ramp-2);
+    --color-ramp-3: var(--ramp-3);
+    --color-ramp-4: var(--ramp-4);
+    --color-status-good: var(--status-good);
+    --color-status-warning: var(--status-warning);
+    --color-status-serious: var(--status-serious);
+    --color-status-critical: var(--status-critical);
+    --color-chart-grid: var(--chart-grid);
+    --color-chart-axis: var(--chart-axis);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
