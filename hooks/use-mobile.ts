@@ -9,14 +9,6 @@ function subscribe(onChange: () => void) {
   return () => mql.removeEventListener("change", onChange)
 }
 
-/**
- * Viewport width as an external store rather than effect-driven state.
- *
- * `matchMedia` is exactly the kind of platform API `useSyncExternalStore`
- * exists for: reading it during render keeps the first client paint correct
- * instead of flashing the desktop layout for a frame, and the server snapshot
- * pins SSR to the desktop branch so the markup is deterministic.
- */
 export function useIsMobile() {
   return React.useSyncExternalStore(
     subscribe,
