@@ -5,7 +5,7 @@ import { cookies } from "next/headers"
 /**
  * The dashboard keeps its own session cookies rather than forwarding the API's.
  *
- * Every call to the BeautyHub API is made server-side from this app, so the
+ * Every call to the Beautys API is made server-side from this app, so the
  * browser never holds an API credential: it holds these two httpOnly cookies,
  * and the Next server is the only thing that ever sends a bearer token. That
  * also sidesteps cross-origin cookie rules once the API and the dashboard sit

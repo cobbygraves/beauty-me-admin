@@ -1,7 +1,7 @@
 import type { Tone } from "@/lib/booking"
 
 /**
- * The BeautyHub chart palette.
+ * The Beautys chart palette.
  *
  * Slots are CSS variables (defined in `app/globals.css`) rather than literal
  * hexes so light and dark swap in one place. Assign them **in order** and never

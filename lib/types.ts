@@ -1,5 +1,5 @@
 /**
- * Wire types for the BeautyHub admin API.
+ * Wire types for the Beautys admin API.
  *
  * These mirror `server/src/schemas/*` and the shapes `server/src/admin/*`
  * returns. The core entity types are deliberately identical to the mobile

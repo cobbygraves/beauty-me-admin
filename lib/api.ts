@@ -3,7 +3,7 @@ import "server-only"
 import { getAccessToken } from "@/lib/session"
 
 /**
- * Base URL of the BeautyHub NestJS API. Server-only, so it is deliberately not
+ * Base URL of the Beautys NestJS API. Server-only, so it is deliberately not
  * `NEXT_PUBLIC_` — the browser never talks to the API directly.
  */
 export const API_BASE_URL = (
@@ -71,7 +71,7 @@ function buildUrl(
 }
 
 /**
- * Calls the BeautyHub API with the signed-in admin's bearer token.
+ * Calls the Beautys API with the signed-in admin's bearer token.
  *
  * Admin data is never cached: an operator acting on a suspension or a payout
  * has to see the result of their own action, not a revalidated snapshot.
@@ -101,7 +101,7 @@ export async function apiFetch<T>(
     })
   } catch {
     throw new ApiError(
-      `Could not reach the BeautyHub API at ${API_BASE_URL}. Check that the server is running and that API_URL points to it.`,
+      `Could not reach the Beautys API at ${API_BASE_URL}. Check that the server is running and that API_URL points to it.`,
       503
     )
   }

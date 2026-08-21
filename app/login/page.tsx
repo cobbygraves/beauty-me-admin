@@ -28,7 +28,7 @@ export default async function LoginPage({
           />
           <div className="flex flex-col gap-1.5">
             <h1 className="font-heading text-2xl font-semibold tracking-tight">
-              BeautyHub Admin
+              Beautys Admin
             </h1>
             <p className="text-sm text-muted-foreground">
               Sign in with the mobile number and PIN on your administrator
@@ -46,7 +46,7 @@ export default async function LoginPage({
         />
 
         <p className="text-center text-xs text-muted-foreground">
-          Clients and providers use the BeautyHub mobile app — this console is
+          Clients and providers use the Beautys mobile app — this console is
           for platform operators.
         </p>
       </div>

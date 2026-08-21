@@ -31,7 +31,7 @@ export default function DashboardError({
       </h1>
       <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
         {error.message ||
-          "Something went wrong fetching data from the BeautyHub API."}
+          "Something went wrong fetching data from the Beautys API."}
       </p>
       <Button variant="outline" onClick={reset} className="mt-2">
         <RotateCcwIcon />
