@@ -68,7 +68,7 @@ export default async function ProvidersPage({
     <>
       <PageHeader
         title="Providers"
-        description="Everyone offering services on BeautyHub. Only verified providers with a payout account can be booked."
+        description="Everyone offering services on Beautys. Only verified providers with a payout account can be booked."
       />
 
       <Card>

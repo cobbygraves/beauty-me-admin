@@ -56,7 +56,7 @@ export default async function ClientsPage({
     <>
       <PageHeader
         title="Clients"
-        description="Everyone who books through the BeautyHub app. Lifetime value counts every booking they have paid for."
+        description="Everyone who books through the Beautys app. Lifetime value counts every booking they have paid for."
       />
 
       <Card>

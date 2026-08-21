@@ -21,11 +21,11 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "BeautyHub Admin",
-    template: "%s · BeautyHub Admin",
+    default: "Beautys Admin",
+    template: "%s · Beautys Admin",
   },
   description:
-    "Operations console for the BeautyHub marketplace — provider vetting, booking oversight, payments and analytics.",
+    "Operations console for the Beautys marketplace — provider vetting, booking oversight, payments and analytics.",
   icons: {
     icon: "/favicon.ico",
   },

@@ -13,7 +13,7 @@ import type { AuthResponse } from "@/lib/types"
 import { requiredField, toErrorState } from "@/lib/actions/helpers"
 
 /**
- * Signs an operator in against the BeautyHub API and stores the resulting
+ * Signs an operator in against the Beautys API and stores the resulting
  * tokens in this app's own httpOnly cookies.
  *
  * The role check happens here rather than at the route: a client or provider
@@ -44,7 +44,7 @@ export async function signIn(
 
   if (session.role !== "ADMIN") {
     return errorState(
-      "That account is not an administrator. The BeautyHub apps are where clients and providers sign in."
+      "That account is not an administrator. The Beautys apps are where clients and providers sign in."
     )
   }
 

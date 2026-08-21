@@ -109,7 +109,7 @@ export function AppSidebar({
           />
           <span className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
             <span className="truncate font-heading text-sm font-semibold tracking-tight">
-              BeautyHub
+              Beautys
             </span>
             <span className="truncate text-xs text-muted-foreground">
               Admin console

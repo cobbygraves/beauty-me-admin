@@ -30,7 +30,7 @@ export function CreateAdminButton() {
           name="email"
           type="email"
           required
-          placeholder="ama@beautyhub.com"
+          placeholder="ama@beautys.com"
         />
       </DialogField>
       <DialogField label="Mobile number" hint="What they sign in with.">
