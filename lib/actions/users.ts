@@ -9,6 +9,7 @@ import {
   requiredField,
   toErrorState,
 } from "@/lib/actions/helpers"
+import { parseMobile } from "@/lib/phone"
 
 export async function setUserSuspension(
   _previous: ActionState,
@@ -45,10 +46,22 @@ export async function updateUser(
   const userId = requiredField(formData, "userId")
   if (!userId) return errorState("Missing user.")
 
+  const mobile = optionalField(formData, "mobile")
+  const country = optionalField(formData, "country")
+
+  // A number is only sent on if it parses, so an operator sees the problem
+  // before the API does.
+  let normalizedMobile: string | undefined
+  if (mobile) {
+    const parsed = parseMobile(mobile, country)
+    if (!parsed.ok) return errorState(parsed.reason)
+    normalizedMobile = parsed.value.e164
+  }
+
   const payload = {
     username: optionalField(formData, "username"),
     email: optionalField(formData, "email"),
-    mobile: optionalField(formData, "mobile"),
+    mobile: normalizedMobile,
     role: optionalField(formData, "role"),
   }
 
@@ -92,8 +105,19 @@ export async function createAdmin(
     return errorState("The PIN must be 4 to 6 digits.")
   }
 
+  // Stored in E.164, so the number the new admin signs in with is the number
+  // written here — a local form would create an account they cannot reach.
+  const parsedMobile = parseMobile(
+    payload.mobile,
+    optionalField(formData, "country")
+  )
+  if (!parsedMobile.ok) return errorState(parsedMobile.reason)
+
   try {
-    await apiFetch("/admin/admins", { method: "POST", body: payload })
+    await apiFetch("/admin/admins", {
+      method: "POST",
+      body: { ...payload, mobile: parsedMobile.value.e164 },
+    })
   } catch (error) {
     return toErrorState(error, "Could not create this administrator.")
   }

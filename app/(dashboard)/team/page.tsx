@@ -23,6 +23,7 @@ import {
 import { listAdmins } from "@/lib/admin-api"
 import { requireAdmin } from "@/lib/auth"
 import { formatDate, initialsOf } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 
 export const metadata: Metadata = { title: "Admin team" }
 
@@ -77,7 +78,7 @@ export default async function TeamPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       <span className="flex flex-col">
-                        <span>{admin.mobile}</span>
+                        <span>{formatMobile(admin.mobile)}</span>
                         <span className="text-xs">{admin.email}</span>
                       </span>
                     </TableCell>

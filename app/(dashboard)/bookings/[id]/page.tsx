@@ -38,6 +38,7 @@ import {
   formatDuration,
   formatRelative,
 } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 import type { ActorType } from "@/lib/types"
 
 export async function generateMetadata({
@@ -173,10 +174,7 @@ export default async function BookingDetailPage({
                         }
                       />
                       {index < statusHistory.length - 1 ? (
-                        <span
-                          aria-hidden
-                          className="w-px flex-1 bg-border"
-                        />
+                        <span aria-hidden className="w-px flex-1 bg-border" />
                       ) : null}
                     </div>
 
@@ -237,7 +235,7 @@ export default async function BookingDetailPage({
                   <span className="text-muted-foreground">Account removed</span>
                 )}
                 <span className="text-sm text-muted-foreground">
-                  {client?.mobile ?? "—"}
+                  {client?.mobile ? formatMobile(client.mobile) : "—"}
                 </span>
               </div>
 
@@ -256,7 +254,7 @@ export default async function BookingDetailPage({
                   <span className="text-muted-foreground">Account removed</span>
                 )}
                 <span className="text-sm text-muted-foreground">
-                  {provider?.mobile ?? "—"}
+                  {provider?.mobile ? formatMobile(provider.mobile) : "—"}
                 </span>
               </div>
 

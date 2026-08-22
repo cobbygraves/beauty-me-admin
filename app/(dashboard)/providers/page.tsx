@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table"
 import { listCategories, listProviders } from "@/lib/admin-api"
 import { formatCurrency, formatNumber, initialsOf } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 
 export const metadata: Metadata = { title: "Providers" }
 
@@ -153,7 +154,7 @@ export default async function ProvidersPage({
                             {provider.businessName || provider.username}
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            {provider.mobile}
+                            {formatMobile(provider.mobile)}
                           </span>
                         </span>
                       </Link>

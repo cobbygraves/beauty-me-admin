@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ActionDialog, DialogField } from "@/components/action-dialog"
+import { CountrySelect } from "@/components/country-select"
+import { countryOfE164, DEFAULT_COUNTRY_ISO, toLocalFormat } from "@/lib/phone"
 import { setUserSuspension, updateUser } from "@/lib/actions/users"
 import { verifyProvider } from "@/lib/actions/providers"
 import { overrideBooking } from "@/lib/actions/bookings"
@@ -96,7 +98,15 @@ export function EditUserButton({
         <Input name="email" type="email" defaultValue={email} />
       </DialogField>
       <DialogField label="Mobile">
-        <Input name="mobile" defaultValue={mobile} />
+        {/* Shown split the way it was entered — the country beside the local
+            number — rather than as the stored `+233241234567`. Retyping either
+            half is enough; the action recombines them into E.164. */}
+        <div className="flex gap-2">
+          <CountrySelect
+            defaultValue={countryOfE164(mobile)?.iso2 ?? DEFAULT_COUNTRY_ISO}
+          />
+          <Input name="mobile" defaultValue={toLocalFormat(mobile)} />
+        </div>
       </DialogField>
       <DialogField label="Role">
         <select name="role" defaultValue={role} className={SELECT_CLASSES}>
@@ -177,8 +187,15 @@ export function OverrideBookingButton({
       trigger={<Button variant="destructive">Override status</Button>}
     >
       <input type="hidden" name="bookingId" value={bookingId} />
-      <DialogField label="Move to" hint={`Currently ${STATUS_META[currentStatus].label}.`}>
-        <select name="status" defaultValue={currentStatus} className={SELECT_CLASSES}>
+      <DialogField
+        label="Move to"
+        hint={`Currently ${STATUS_META[currentStatus].label}.`}
+      >
+        <select
+          name="status"
+          defaultValue={currentStatus}
+          className={SELECT_CLASSES}
+        >
           {BOOKING_STATUSES.map((status) => (
             <option key={status} value={status}>
               {STATUS_META[status].label}
@@ -223,7 +240,10 @@ export function DeleteReviewButton({
       }
     >
       <input type="hidden" name="reviewId" value={reviewId} />
-      <DialogField label="Reason" hint="At least 8 characters. Logged with the action.">
+      <DialogField
+        label="Reason"
+        hint="At least 8 characters. Logged with the action."
+      >
         <Textarea
           name="reason"
           required

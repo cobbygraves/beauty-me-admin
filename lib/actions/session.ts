@@ -9,8 +9,13 @@ import {
   getAccessToken,
   setSessionCookies,
 } from "@/lib/session"
-import type { AuthResponse } from "@/lib/types"
-import { requiredField, toErrorState } from "@/lib/actions/helpers"
+import type { AuthResponse, LoginResponse } from "@/lib/types"
+import {
+  requiredField,
+  optionalField,
+  toErrorState,
+} from "@/lib/actions/helpers"
+import { parseMobile } from "@/lib/phone"
 
 /**
  * Signs an operator in against the Beautys API and stores the resulting
@@ -25,22 +30,43 @@ export async function signIn(
   formData: FormData
 ): Promise<ActionState> {
   const mobile = requiredField(formData, "mobile")
+  const country = optionalField(formData, "country")
   const pin = requiredField(formData, "pin")
 
   if (!mobile || !pin) {
     return errorState("Enter your mobile number and PIN.")
   }
 
-  let session: AuthResponse
+  // Normalised here so a typo is caught before a round trip, and so the API
+  // receives the same E.164 number the account is stored under. The API
+  // normalises again — this is a convenience, not the enforcement point.
+  const parsed = parseMobile(mobile, country)
+  if (!parsed.ok) {
+    return errorState(parsed.reason)
+  }
+
+  let response: LoginResponse
   try {
-    session = await apiFetch<AuthResponse>("/auth/login", {
+    response = await apiFetch<LoginResponse>("/auth/login", {
       method: "POST",
       anonymous: true,
-      body: { mobile, pin },
+      body: { mobile: parsed.value.e164, pin },
     })
   } catch (error) {
     return toErrorState(error, "Could not sign you in. Please try again.")
   }
+
+  // Only clients and providers get the SMS step, and the API withholds the
+  // tokens until they pass it. Reaching this branch means the credentials were
+  // valid but belong to a non-admin, so it is the same refusal as below --
+  // spelled out rather than left to fall through a missing `role`.
+  if ("otpRequired" in response) {
+    return errorState(
+      "That account is not an administrator. The Beautys apps are where clients and providers sign in."
+    )
+  }
+
+  const session: AuthResponse = response
 
   if (session.role !== "ADMIN") {
     return errorState(

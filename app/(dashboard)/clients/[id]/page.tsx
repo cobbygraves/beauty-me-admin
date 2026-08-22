@@ -36,6 +36,7 @@ import {
   formatNumber,
   initialsOf,
 } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 import { ROLE_LABELS } from "@/lib/booking"
 
 export async function generateMetadata({
@@ -63,7 +64,10 @@ export default async function ClientDetailPage({
   try {
     detail = await getUserDetail(id)
   } catch (error) {
-    if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
+    if (
+      error instanceof ApiError &&
+      (error.status === 404 || error.status === 400)
+    ) {
       notFound()
     }
     throw error
@@ -161,7 +165,7 @@ export default async function ClientDetailPage({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <StatLine label="Mobile" value={user.mobile} />
+              <StatLine label="Mobile" value={formatMobile(user.mobile)} />
               <StatLine
                 label="Status"
                 value={
