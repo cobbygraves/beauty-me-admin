@@ -5,6 +5,7 @@ import { UserPlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ActionDialog, DialogField } from "@/components/action-dialog"
+import { CountrySelect } from "@/components/country-select"
 import { createAdmin } from "@/lib/actions/users"
 
 export function CreateAdminButton() {
@@ -34,7 +35,10 @@ export function CreateAdminButton() {
         />
       </DialogField>
       <DialogField label="Mobile number" hint="What they sign in with.">
-        <Input name="mobile" required placeholder="0244000000" />
+        <div className="flex gap-2">
+          <CountrySelect />
+          <Input name="mobile" required placeholder="0244000000" />
+        </div>
       </DialogField>
       <DialogField label="PIN" hint="4 to 6 digits.">
         <Input

@@ -4,6 +4,7 @@ import { useActionState } from "react"
 import { AlertCircleIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { CountrySelect } from "@/components/country-select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
@@ -13,7 +14,9 @@ import { IDLE_STATE } from "@/lib/action-state"
 export function LoginForm({ initialError }: { initialError?: string }) {
   const [state, formAction, isPending] = useActionState(
     signIn,
-    initialError ? { status: "error" as const, message: initialError } : IDLE_STATE
+    initialError
+      ? { status: "error" as const, message: initialError }
+      : IDLE_STATE
   )
 
   return (
@@ -23,16 +26,19 @@ export function LoginForm({ initialError }: { initialError?: string }) {
     >
       <div className="flex flex-col gap-2">
         <Label htmlFor="mobile">Mobile number</Label>
-        <Input
-          id="mobile"
-          name="mobile"
-          type="tel"
-          inputMode="tel"
-          autoComplete="username"
-          placeholder="0244000000"
-          required
-          autoFocus
-        />
+        <div className="flex gap-2">
+          <CountrySelect />
+          <Input
+            id="mobile"
+            name="mobile"
+            type="tel"
+            inputMode="tel"
+            autoComplete="username"
+            placeholder="0244000000"
+            required
+            autoFocus
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">

@@ -13,7 +13,10 @@ export type Role = "SUBSCRIBER" | "PROVIDER" | "ADMIN"
 export interface User {
   _id: string
   id: string
+  /** E.164, country code included. */
   mobile: string
+  /** ISO 3166-1 alpha-2 the number belongs to. */
+  mobileCountry?: string
   username: string
   email: string
   role: Role
@@ -28,6 +31,22 @@ export interface AuthResponse extends User {
   accessToken: string
   refreshToken?: string
 }
+
+/**
+ * What the API returns from `/auth/login` for a client or provider: the PIN was
+ * accepted, but a session only exists once the code texted to their registered
+ * number is verified in the mobile app. The dashboard never completes this --
+ * admins skip the SMS step entirely -- but it has to recognise the shape.
+ */
+export interface LoginOtpChallenge {
+  otpRequired: true
+  otpToken: string
+  mobile: string
+  expiresAt: string
+  message: string
+}
+
+export type LoginResponse = AuthResponse | LoginOtpChallenge
 
 // ---- Catalog ----
 
@@ -48,10 +67,7 @@ export interface AdminCategory extends ServiceCategory {
 // ---- Provider profile ----
 
 export type VerificationStatus =
-  | "UNSUBMITTED"
-  | "PENDING"
-  | "APPROVED"
-  | "REJECTED"
+  "UNSUBMITTED" | "PENDING" | "APPROVED" | "REJECTED"
 
 export interface ProviderServiceItem {
   _id: string
@@ -229,8 +245,10 @@ export interface AdminProviderRow {
   createdAt?: string
 }
 
-export interface AdminBookingRow
-  extends Omit<Booking, "statusHistory" | "clientLocation"> {
+export interface AdminBookingRow extends Omit<
+  Booking,
+  "statusHistory" | "clientLocation"
+> {
   clientName: string
   clientMobile: string
   providerName: string

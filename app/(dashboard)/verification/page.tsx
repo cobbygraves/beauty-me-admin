@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card"
 import { getAnalyticsOverview, listProviders } from "@/lib/admin-api"
 import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 
 export const metadata: Metadata = { title: "Verification queue" }
 
@@ -70,8 +71,8 @@ export default async function VerificationPage() {
               The queue is clear
             </p>
             <p className="max-w-sm text-sm text-muted-foreground">
-              Every provider who has submitted documents has had a decision.
-              New submissions will appear here.
+              Every provider who has submitted documents has had a decision. New
+              submissions will appear here.
             </p>
           </CardContent>
         </Card>
@@ -90,7 +91,8 @@ export default async function VerificationPage() {
                     </Link>
                   </CardTitle>
                   <CardDescription>
-                    {provider.username} · {provider.mobile} · submitted{" "}
+                    {provider.username} · {formatMobile(provider.mobile)} ·
+                    submitted{" "}
                     {provider.createdAt ? formatDate(provider.createdAt) : "—"}
                   </CardDescription>
                 </CardHeader>

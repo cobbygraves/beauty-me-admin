@@ -48,6 +48,7 @@ import {
   formatNumber,
   initialsOf,
 } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 
 export async function generateMetadata({
   params,
@@ -104,7 +105,7 @@ export default async function ProviderDetailPage({
         title={displayName}
         description={
           user
-            ? `${user.username} · ${user.mobile} · joined ${
+            ? `${user.username} · ${formatMobile(user.mobile)} · joined ${
                 profile.createdAt ? formatDate(profile.createdAt) : "—"
               }`
             : "The user account behind this profile no longer exists."

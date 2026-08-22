@@ -21,6 +21,7 @@ import {
   formatNumber,
   initialsOf,
 } from "@/lib/format"
+import { formatMobile } from "@/lib/phone"
 
 export const metadata: Metadata = { title: "Clients" }
 
@@ -121,7 +122,7 @@ export default async function ClientsPage({
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       <span className="flex flex-col">
-                        <span>{client.mobile}</span>
+                        <span>{formatMobile(client.mobile)}</span>
                         <span className="text-xs">{client.email}</span>
                       </span>
                     </TableCell>
