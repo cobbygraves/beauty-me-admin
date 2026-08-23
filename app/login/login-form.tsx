@@ -4,7 +4,6 @@ import { useActionState } from "react"
 import { AlertCircleIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { CountrySelect } from "@/components/country-select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
@@ -26,19 +25,20 @@ export function LoginForm({ initialError }: { initialError?: string }) {
     >
       <div className="flex flex-col gap-2">
         <Label htmlFor="mobile">Mobile number</Label>
-        <div className="flex gap-2">
-          <CountrySelect />
-          <Input
-            id="mobile"
-            name="mobile"
-            type="tel"
-            inputMode="tel"
-            autoComplete="username"
-            placeholder="0244000000"
-            required
-            autoFocus
-          />
-        </div>
+        {/* No country picker here: administrators are Ghanaian, so the number
+            is read as local to Ghana and normalised to E.164 server-side. The
+            picker still stands where an admin account is created or edited,
+            which is where a number is chosen rather than merely typed back. */}
+        <Input
+          id="mobile"
+          name="mobile"
+          type="tel"
+          inputMode="tel"
+          autoComplete="username"
+          placeholder="0244000000"
+          required
+          autoFocus
+        />
       </div>
 
       <div className="flex flex-col gap-2">

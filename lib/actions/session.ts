@@ -10,12 +10,8 @@ import {
   setSessionCookies,
 } from "@/lib/session"
 import type { AuthResponse, LoginResponse } from "@/lib/types"
-import {
-  requiredField,
-  optionalField,
-  toErrorState,
-} from "@/lib/actions/helpers"
-import { parseMobile } from "@/lib/phone"
+import { requiredField, toErrorState } from "@/lib/actions/helpers"
+import { DEFAULT_COUNTRY_ISO, parseMobile } from "@/lib/phone"
 
 /**
  * Signs an operator in against the Beautys API and stores the resulting
@@ -30,7 +26,6 @@ export async function signIn(
   formData: FormData
 ): Promise<ActionState> {
   const mobile = requiredField(formData, "mobile")
-  const country = optionalField(formData, "country")
   const pin = requiredField(formData, "pin")
 
   if (!mobile || !pin) {
@@ -40,7 +35,11 @@ export async function signIn(
   // Normalised here so a typo is caught before a round trip, and so the API
   // receives the same E.164 number the account is stored under. The API
   // normalises again — this is a convenience, not the enforcement point.
-  const parsed = parseMobile(mobile, country)
+  //
+  // The form carries no country: administrators are Ghanaian, so the number is
+  // always read as local to Ghana. A number typed with its own `+` country code
+  // still parses as international, which keeps `+233...` working verbatim.
+  const parsed = parseMobile(mobile, DEFAULT_COUNTRY_ISO)
   if (!parsed.ok) {
     return errorState(parsed.reason)
   }
