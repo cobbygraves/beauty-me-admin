@@ -3,6 +3,7 @@ import {
   PAYMENT_STATUS_META,
   SETTLEMENT_STATUS_META,
   STATUS_META,
+  tierMetaOf,
   TRANSACTION_STATUS_META,
   VERIFICATION_META,
   type Tone,
@@ -12,6 +13,7 @@ import type {
   PaymentStatus,
   SettlementStatus,
   VerificationStatus,
+  VerificationTier,
 } from "@/lib/types"
 
 /**
@@ -120,6 +122,23 @@ export function VerificationBadge({
   className?: string
 }) {
   const meta = VERIFICATION_META[status]
+  return <ToneBadge tone={meta.tone} label={meta.label} className={className} />
+}
+
+/**
+ * What the marketplace shows for this provider. Distinct from
+ * `VerificationBadge`, which reports where their newest submission stands - the
+ * two disagree on purpose while an ID-verified provider has a business
+ * registration under review.
+ */
+export function TierBadge({
+  tier,
+  className,
+}: {
+  tier: VerificationTier | undefined
+  className?: string
+}) {
+  const meta = tierMetaOf(tier)
   return <ToneBadge tone={meta.tone} label={meta.label} className={className} />
 }
 

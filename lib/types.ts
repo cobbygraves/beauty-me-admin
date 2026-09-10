@@ -69,6 +69,15 @@ export interface AdminCategory extends ServiceCategory {
 export type VerificationStatus =
   "UNSUBMITTED" | "PENDING" | "APPROVED" | "REJECTED"
 
+/**
+ * What an admin signed off on, which is what the marketplace badge shows.
+ * A government ID alone lists a provider; a business registration on top of it
+ * earns the stronger badge. Deliberately distinct from `status`, which only
+ * describes the newest submission - an ID-verified provider adding a business
+ * registration later stays listed at `ID` while it is reviewed.
+ */
+export type VerificationTier = "NONE" | "ID" | "BUSINESS"
+
 export interface ProviderServiceItem {
   _id: string
   name: string
@@ -91,6 +100,7 @@ export interface ProviderVerification {
   licenseDocumentUrl?: string | null
   licenseNumber?: string | null
   status: VerificationStatus
+  approvedTier: VerificationTier
   rejectionReason?: string | null
   reviewedAt?: string | null
 }

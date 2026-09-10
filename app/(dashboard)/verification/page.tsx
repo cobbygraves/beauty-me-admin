@@ -31,7 +31,7 @@ export default async function VerificationPage() {
     <>
       <PageHeader
         title="Verification queue"
-        description="Providers cannot be booked until their documents are approved, so this queue is the gate on marketplace supply. Oldest submissions first."
+        description="Nothing reaches the marketplace until it clears this queue, so it is the gate on supply. A government ID is all that is required; a business registration is optional and earns the stronger badge clients see. Oldest submissions first."
       />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -145,7 +145,8 @@ export default async function VerificationPage() {
                     />
                     <DocumentChip
                       href={provider.verification.licenseDocumentUrl}
-                      label="Licence"
+                      label="business registration"
+                      optional
                     />
                     {provider.verification.licenseNumber ? (
                       <span className="inline-flex items-center rounded-4xl bg-muted px-3 py-1.5 text-xs font-medium">
@@ -154,9 +155,19 @@ export default async function VerificationPage() {
                     ) : null}
                   </div>
 
+                  {provider.verification.approvedTier === "ID" ? (
+                    <p className="rounded-xl bg-status-good/10 p-3 text-xs">
+                      Already live as ID verified — this is an upgrade request.
+                      They stay listed and badged whichever way you decide.
+                    </p>
+                  ) : null}
+
                   <VerifyProviderButtons
                     providerId={provider._id}
                     businessName={provider.businessName || provider.username}
+                    hasBusinessDocument={Boolean(
+                      provider.verification.licenseDocumentUrl
+                    )}
                   />
                 </CardContent>
               </Card>
@@ -171,15 +182,18 @@ export default async function VerificationPage() {
 function DocumentChip({
   href,
   label,
+  optional = false,
 }: {
   href?: string | null
   label: string
+  /** Reads as a choice the provider made rather than a gap to chase. */
+  optional?: boolean
 }) {
   if (!href) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-4xl border border-border px-3 py-1.5 text-xs text-muted-foreground">
         <FileTextIcon className="size-3" aria-hidden />
-        {label} missing
+        {optional ? `No ${label}` : `${label} missing`}
       </span>
     )
   }

@@ -3,6 +3,7 @@ import type {
   PaymentStatus,
   SettlementStatus,
   VerificationStatus,
+  VerificationTier,
 } from "@/lib/types"
 
 /**
@@ -180,6 +181,44 @@ export const VERIFICATION_META: Record<
     tone: "danger",
     blurb: "Documents were rejected. The provider has been asked to resubmit.",
   },
+}
+
+/**
+ * The badge a client sees on the marketplace card, from an operator's side.
+ *
+ * `NONE` is not a rejection - it is simply "not listed", the state every
+ * provider is in before their first approval and the one a rejection returns
+ * them to.
+ */
+export const TIER_META: Record<
+  VerificationTier,
+  { label: string; tone: Tone; blurb: string }
+> = {
+  NONE: {
+    label: "Not listed",
+    tone: "muted",
+    blurb: "Not on the marketplace — clients cannot find or book them.",
+  },
+  ID: {
+    label: "ID verified",
+    tone: "active",
+    blurb: "Government ID checked. Listed, with the standard badge.",
+  },
+  BUSINESS: {
+    label: "Business verified",
+    tone: "success",
+    blurb:
+      "Government ID and business registration both checked. Listed with the strongest badge.",
+  },
+}
+
+/**
+ * Reads a tier safely. A profile written before the field existed - and never
+ * touched by the backfill - comes back without one through the aggregation
+ * pipelines, which don't apply schema defaults.
+ */
+export function tierMetaOf(tier: VerificationTier | undefined) {
+  return TIER_META[tier ?? "NONE"] ?? TIER_META.NONE
 }
 
 export const TRANSACTION_STATUS_META: Record<

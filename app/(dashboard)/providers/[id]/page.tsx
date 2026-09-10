@@ -15,6 +15,7 @@ import { StatLine, StatTile } from "@/components/stat-tile"
 import {
   BookingStatusBadge,
   OnlineBadge,
+  TierBadge,
   ToneBadge,
   VerificationBadge,
 } from "@/components/status-badge"
@@ -39,7 +40,7 @@ import {
 } from "@/components/ui/table"
 import { getProviderDetail } from "@/lib/admin-api"
 import { ApiError } from "@/lib/api"
-import { VERIFICATION_META } from "@/lib/booking"
+import { tierMetaOf, VERIFICATION_META } from "@/lib/booking"
 import {
   formatCurrency,
   formatDate,
@@ -122,6 +123,7 @@ export default async function ProviderDetailPage({
       />
 
       <section className="flex flex-wrap items-center gap-2">
+        <TierBadge tier={verification.approvedTier} />
         <VerificationBadge status={verification.status} />
         <OnlineBadge isOnline={profile.isOnline} />
         <ToneBadge
@@ -168,13 +170,15 @@ export default async function ProviderDetailPage({
         <Card>
           <CardHeader>
             <CardTitle>Verification</CardTitle>
-            <CardDescription>{meta.blurb}</CardDescription>
+            <CardDescription>
+              {tierMetaOf(verification.approvedTier).blurb}
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <div className="grid gap-4 sm:grid-cols-2">
               <StatLine
-                label="Licence number"
-                value={verification.licenseNumber || "Not provided"}
+                label="Registration number"
+                value={verification.licenseNumber || "None — ID only"}
               />
               <StatLine
                 label="Last reviewed"
@@ -200,7 +204,7 @@ export default async function ProviderDetailPage({
               />
               <DocumentLink
                 href={verification.licenseDocumentUrl}
-                label="Licence document"
+                label="Business registration"
               />
             </div>
 
@@ -216,6 +220,7 @@ export default async function ProviderDetailPage({
               <VerifyProviderButtons
                 providerId={profile._id}
                 businessName={displayName}
+                hasBusinessDocument={Boolean(verification.licenseDocumentUrl)}
               />
             )}
           </CardContent>

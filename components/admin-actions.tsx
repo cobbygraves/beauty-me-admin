@@ -124,28 +124,54 @@ export function EditUserButton({
 export function VerifyProviderButtons({
   providerId,
   businessName,
+  hasBusinessDocument = false,
 }: {
   providerId: string
   businessName: string
+  /**
+   * Whether a business registration was submitted alongside the ID. It decides
+   * which badge the approval can award — the stronger one is never offered
+   * against a certificate nobody sent, and the API refuses it either way.
+   */
+  hasBusinessDocument?: boolean
 }) {
   return (
     <div className="flex flex-wrap gap-2">
       <ActionDialog
         action={verifyProvider}
         title={`Approve ${businessName}?`}
-        description="They can start taking bookings immediately and are notified in the app."
+        description={
+          hasBusinessDocument
+            ? "They go live on the marketplace immediately and are notified in the app. Choose which badge their documents earn."
+            : "They go live on the marketplace immediately with the ID-verified badge, and are notified in the app."
+        }
         submitLabel="Approve provider"
         pendingLabel="Approving…"
         trigger={<Button>Approve</Button>}
       >
         <input type="hidden" name="providerId" value={providerId} />
         <input type="hidden" name="status" value="APPROVED" />
+        {hasBusinessDocument ? (
+          <DialogField
+            label="Award badge"
+            hint="Approving at ID only keeps a sound identity check while turning down the business certificate — it costs them nothing they already had."
+          >
+            <select
+              name="approvedTier"
+              defaultValue="BUSINESS"
+              className={SELECT_CLASSES}
+            >
+              <option value="BUSINESS">Business verified — ID and registration both check out</option>
+              <option value="ID">ID verified — identity only</option>
+            </select>
+          </DialogField>
+        ) : null}
       </ActionDialog>
 
       <ActionDialog
         action={verifyProvider}
         title={`Reject ${businessName}'s documents?`}
-        description="They stay unverified and are asked to resubmit. Your reason is what they see."
+        description="They come off the marketplace, lose any badge they hold and are asked to resubmit. Your reason is what they see."
         submitLabel="Reject documents"
         submitVariant="destructive"
         pendingLabel="Rejecting…"

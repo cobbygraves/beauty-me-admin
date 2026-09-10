@@ -7,6 +7,7 @@ import { FilterForm, SearchField, SelectField } from "@/components/filters"
 import { PaginationBar } from "@/components/pagination-bar"
 import {
   OnlineBadge,
+  TierBadge,
   ToneBadge,
   VerificationBadge,
 } from "@/components/status-badge"
@@ -163,9 +164,20 @@ export default async function ProvidersPage({
                       {provider.isSuspended ? (
                         <ToneBadge tone="danger" label="Suspended" />
                       ) : (
-                        <VerificationBadge
-                          status={provider.verification.status}
-                        />
+                        <span className="flex flex-wrap items-center gap-1.5">
+                          {/* What the marketplace shows, then where their
+                              newest submission stands - the two differ while an
+                              ID-verified provider has a registration in the
+                              queue, which is exactly when it matters. */}
+                          <TierBadge
+                            tier={provider.verification.approvedTier}
+                          />
+                          {provider.verification.status === "PENDING" ? (
+                            <VerificationBadge
+                              status={provider.verification.status}
+                            />
+                          ) : null}
+                        </span>
                       )}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">

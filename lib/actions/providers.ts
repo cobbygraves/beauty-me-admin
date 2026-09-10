@@ -23,6 +23,9 @@ export async function verifyProvider(
   const providerId = requiredField(formData, "providerId")
   const status = requiredField(formData, "status")
   const rejectionReason = optionalField(formData, "rejectionReason")
+  // Absent on an ID-only submission, where the API awards the only tier the
+  // documents can support.
+  const approvedTier = optionalField(formData, "approvedTier")
 
   if (!providerId) return errorState("Missing provider.")
   if (status !== "APPROVED" && status !== "REJECTED") {
@@ -31,11 +34,14 @@ export async function verifyProvider(
   if (status === "REJECTED" && !rejectionReason) {
     return errorState("Say why — the provider is shown this reason.")
   }
+  if (approvedTier && approvedTier !== "ID" && approvedTier !== "BUSINESS") {
+    return errorState("Choose which badge to award.")
+  }
 
   try {
     await apiFetch(`/admin/providers/${providerId}/verify`, {
       method: "PATCH",
-      body: { status, rejectionReason },
+      body: { status, rejectionReason, approvedTier },
     })
   } catch (error) {
     return toErrorState(error, "Could not record that decision.")
@@ -44,7 +50,9 @@ export async function verifyProvider(
   refresh()
   return successState(
     status === "APPROVED"
-      ? "Provider verified — they can now take bookings."
-      : "Verification rejected and the provider notified."
+      ? approvedTier === "BUSINESS"
+        ? "Business verified — they are live with the strongest badge."
+        : "ID verified — they are live on the marketplace."
+      : "Verification rejected, the provider delisted and notified."
   )
 }

@@ -11,7 +11,6 @@ const nunitoSansHeading = Nunito_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
 })
-
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
