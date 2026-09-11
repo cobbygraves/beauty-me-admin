@@ -75,6 +75,7 @@ export function getAdminActivity() {
 export interface QueueCounts {
   pendingVerifications: number
   paymentsNeedingAttention: number
+  openDisputes: number
   activeBookings: number
 }
 
@@ -116,6 +117,17 @@ export function listBookings(params: ListParams = {}) {
   })
 }
 
+/**
+ * Payouts frozen by a client dispute and still awaiting a ruling.
+ *
+ * A thin preset over `listBookings` rather than its own endpoint, so the queue
+ * inherits the same search, pagination and name enrichment. Sorted oldest
+ * first: the wait that matters is how long a provider's money has been frozen.
+ */
+export function listDisputes(params: ListParams = {}) {
+  return listBookings({ ...params, disputed: "true", sort: "payoutDisputedAt" })
+}
+
 export function getBookingAudit(id: string) {
   return apiFetch<AdminBookingDetail>(`/admin/bookings/${id}/audit`)
 }
@@ -129,7 +141,9 @@ export function listTransactions(params: ListParams = {}) {
 // ---- Moderation ----
 
 export function listReviews(params: ListParams = {}) {
-  return apiFetch<Paginated<AdminReviewRow>>("/admin/reviews", { query: params })
+  return apiFetch<Paginated<AdminReviewRow>>("/admin/reviews", {
+    query: params,
+  })
 }
 
 // ---- Catalog ----

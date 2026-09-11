@@ -161,6 +161,8 @@ export interface BookingStatusHistoryEntry {
   note?: string | null
 }
 
+export type PayoutDisputeResolution = "NONE" | "RELEASED" | "REFUNDED"
+
 export interface Booking {
   _id: string
   clientId: string
@@ -190,6 +192,16 @@ export interface Booking {
   refundAmount: number
   payoutStatus: SettlementStatus
   payoutAmount: number
+  // The client's confirmation window on a COMPLETED/NO_SHOW booking. The
+  // payout is owed from the moment the job completes but does not leave until
+  // `payoutReleaseAt` passes, the client confirms, or an admin rules on a
+  // dispute.
+  payoutReleaseAt?: string | null
+  payoutConfirmedAt?: string | null
+  payoutDisputedAt?: string | null
+  payoutDisputeReason?: string | null
+  payoutDisputeResolution?: PayoutDisputeResolution
+  payoutReminderSentAt?: string | null
   createdAt?: string
   updatedAt?: string
 }

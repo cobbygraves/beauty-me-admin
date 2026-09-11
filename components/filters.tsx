@@ -40,7 +40,9 @@ export function FilterForm({
       // Any filter change invalidates the current page number — page 7 of the
       // old result set is rarely page 7 of the new one.
       const query = params.toString()
-      startTransition(() => router.push(query ? `${pathname}?${query}` : pathname))
+      startTransition(() =>
+        router.push(query ? `${pathname}?${query}` : pathname)
+      )
     },
     [pathname, router]
   )
@@ -145,9 +147,20 @@ export function SelectField({
       defaultValue={defaultValue ?? ""}
       className={cn(CONTROL_CLASSES, "pr-8", className)}
     >
-      {allLabel === null ? null : <option value="">{allLabel}</option>}
+      {/* The dropdown is drawn by the OS and inherits neither the translucent
+          fill above nor a readable colour from it. Without an opaque pair the
+          options render light on light in dark mode. */}
+      {allLabel === null ? null : (
+        <option value="" className="bg-background text-foreground">
+          {allLabel}
+        </option>
+      )}
       {options.map((option) => (
-        <option key={option.value} value={option.value}>
+        <option
+          key={option.value}
+          value={option.value}
+          className="bg-background text-foreground"
+        >
           {option.label}
         </option>
       ))}
