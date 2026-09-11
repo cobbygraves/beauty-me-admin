@@ -15,7 +15,10 @@ import {
   SettlementStatusBadge,
   ToneBadge,
 } from "@/components/status-badge"
-import { OverrideBookingButton } from "@/components/admin-actions"
+import {
+  OverrideBookingButton,
+  ResolveDisputeButton,
+} from "@/components/admin-actions"
 import {
   Card,
   CardContent,
@@ -90,6 +93,10 @@ export default async function BookingDetailPage({
     booking.refundStatus === "FAILED" ||
     booking.payoutStatus === "FAILED"
 
+  const disputed =
+    Boolean(booking.payoutDisputedAt) &&
+    (booking.payoutDisputeResolution ?? "NONE") === "NONE"
+
   const [lng, lat] = booking.clientLocation.coordinates
 
   return (
@@ -110,10 +117,21 @@ export default async function BookingDetailPage({
           booking.scheduledAt
         )}`}
         actions={
-          <OverrideBookingButton
-            bookingId={booking._id}
-            currentStatus={booking.status}
-          />
+          <div className="flex flex-wrap gap-2">
+            {disputed ? (
+              <ResolveDisputeButton
+                bookingId={booking._id}
+                providerName={provider?.username ?? "the provider"}
+                clientName={client?.username ?? "the client"}
+                payoutAmount={booking.payoutAmount}
+                price={booking.price}
+              />
+            ) : null}
+            <OverrideBookingButton
+              bookingId={booking._id}
+              currentStatus={booking.status}
+            />
+          </div>
         }
       />
 
@@ -130,6 +148,19 @@ export default async function BookingDetailPage({
           {STATUS_META[booking.status].blurb}
         </span>
       </section>
+
+      {disputed ? (
+        <p className="flex items-start gap-2 rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>
+            The client reported a problem, so this payout is frozen until you
+            rule on it — nothing releases it automatically.
+            {booking.payoutDisputeReason
+              ? ` Their report: “${booking.payoutDisputeReason}”`
+              : null}
+          </span>
+        </p>
+      ) : null}
 
       {moneyStuck ? (
         <p className="flex items-start gap-2 rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">

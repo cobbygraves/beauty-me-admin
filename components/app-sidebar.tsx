@@ -9,6 +9,7 @@ import {
   CalendarCheckIcon,
   ChartNoAxesCombinedIcon,
   CreditCardIcon,
+  GavelIcon,
   LayoutDashboardIcon,
   ScissorsIcon,
   ShieldCheckIcon,
@@ -39,7 +40,8 @@ interface NavItem {
   label: string
   icon: typeof LayoutDashboardIcon
   /** Count of work waiting on an operator, shown as a badge. */
-  badgeKey?: "pendingVerifications" | "paymentsNeedingAttention"
+  badgeKey?:
+    "pendingVerifications" | "paymentsNeedingAttention" | "openDisputes"
 }
 
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
@@ -73,6 +75,12 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
         icon: CreditCardIcon,
         badgeKey: "paymentsNeedingAttention",
       },
+      {
+        href: "/disputes",
+        label: "Disputes",
+        icon: GavelIcon,
+        badgeKey: "openDisputes",
+      },
       { href: "/reviews", label: "Reviews", icon: StarIcon },
       { href: "/categories", label: "Service catalog", icon: ScissorsIcon },
       { href: "/broadcasts", label: "Broadcasts", icon: BellRingIcon },
@@ -86,7 +94,11 @@ export function AppSidebar({
   badges,
 }: {
   user: User
-  badges: { pendingVerifications: number; paymentsNeedingAttention: number }
+  badges: {
+    pendingVerifications: number
+    paymentsNeedingAttention: number
+    openDisputes: number
+  }
 }) {
   const pathname = usePathname()
 
@@ -161,7 +173,9 @@ export function AppSidebar({
             {initialsOf(user.username)}
           </span>
           <span className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-sm font-medium">{user.username}</span>
+            <span className="truncate text-sm font-medium">
+              {user.username}
+            </span>
             <span className="truncate text-xs text-muted-foreground">
               {user.email}
             </span>

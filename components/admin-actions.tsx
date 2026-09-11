@@ -8,9 +8,10 @@ import { CountrySelect } from "@/components/country-select"
 import { countryOfE164, DEFAULT_COUNTRY_ISO, toLocalFormat } from "@/lib/phone"
 import { setUserSuspension, updateUser } from "@/lib/actions/users"
 import { verifyProvider } from "@/lib/actions/providers"
-import { overrideBooking } from "@/lib/actions/bookings"
+import { overrideBooking, resolveDispute } from "@/lib/actions/bookings"
 import { deleteReview } from "@/lib/actions/reviews"
 import { BOOKING_STATUSES, STATUS_META, ROLE_LABELS } from "@/lib/booking"
+import { formatCurrency } from "@/lib/format"
 import type { BookingStatus, Role } from "@/lib/types"
 
 const SELECT_CLASSES =
@@ -111,7 +112,11 @@ export function EditUserButton({
       <DialogField label="Role">
         <select name="role" defaultValue={role} className={SELECT_CLASSES}>
           {Object.entries(ROLE_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
+            <option
+              key={value}
+              value={value}
+              className="bg-background text-foreground"
+            >
               {label}
             </option>
           ))}
@@ -161,8 +166,15 @@ export function VerifyProviderButtons({
               defaultValue="BUSINESS"
               className={SELECT_CLASSES}
             >
-              <option value="BUSINESS">Business verified — ID and registration both check out</option>
-              <option value="ID">ID verified — identity only</option>
+              <option
+                value="BUSINESS"
+                className="bg-background text-foreground"
+              >
+                Business verified — ID and registration both check out
+              </option>
+              <option value="ID" className="bg-background text-foreground">
+                ID verified — identity only
+              </option>
             </select>
           </DialogField>
         ) : null}
@@ -223,7 +235,11 @@ export function OverrideBookingButton({
           className={SELECT_CLASSES}
         >
           {BOOKING_STATUSES.map((status) => (
-            <option key={status} value={status}>
+            <option
+              key={status}
+              value={status}
+              className="bg-background text-foreground"
+            >
               {STATUS_META[status].label}
             </option>
           ))}
@@ -238,6 +254,65 @@ export function OverrideBookingButton({
           required
           rows={3}
           placeholder="Provider unreachable for 3 days; refunding the client in full."
+        />
+      </DialogField>
+    </ActionDialog>
+  )
+}
+
+/**
+ * The only exit from a disputed payout — nothing releases a frozen one on its
+ * own. The two outcomes are irreversible the moment the transfer or refund
+ * lands, so both the choice and the note are made explicit rather than
+ * defaulted.
+ */
+export function ResolveDisputeButton({
+  bookingId,
+  providerName,
+  clientName,
+  payoutAmount,
+  price,
+}: {
+  bookingId: string
+  providerName: string
+  clientName: string
+  payoutAmount: number
+  price: number
+}) {
+  return (
+    <ActionDialog
+      action={resolveDispute}
+      title="Resolve this dispute"
+      description={`${clientName} reported a problem with this booking. Releasing pays ${providerName} ${formatCurrency(payoutAmount)}; refunding returns ${formatCurrency(price)} to ${clientName} and cancels the payout. Neither can be undone once the money moves.`}
+      submitLabel="Apply ruling"
+      submitVariant="destructive"
+      pendingLabel="Applying…"
+      trigger={<Button size="sm">Resolve</Button>}
+    >
+      <input type="hidden" name="bookingId" value={bookingId} />
+      <DialogField label="Ruling">
+        <select
+          name="resolution"
+          defaultValue="RELEASED"
+          className={SELECT_CLASSES}
+        >
+          <option value="RELEASED" className="bg-background text-foreground">
+            Release the payout — pay {providerName}
+          </option>
+          <option value="REFUNDED" className="bg-background text-foreground">
+            Refund the client — return the full price
+          </option>
+        </select>
+      </DialogField>
+      <DialogField
+        label="Note"
+        hint="At least 8 characters. Written to the booking's permanent history."
+      >
+        <Textarea
+          name="note"
+          required
+          rows={3}
+          placeholder="Spoke to both parties; provider re-did the service at no charge."
         />
       </DialogField>
     </ActionDialog>
