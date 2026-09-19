@@ -157,7 +157,7 @@ export default async function VerificationPage() {
 
                   {provider.verification.approvedTier === "ID" ? (
                     <p className="rounded-xl bg-status-good/10 p-3 text-xs">
-                      Already live as ID verified — this is an upgrade request.
+                      Already live as Verified — this is an upgrade request.
                       They stay listed and badged whichever way you decide.
                     </p>
                   ) : null}

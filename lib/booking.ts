@@ -199,13 +199,15 @@ export const TIER_META: Record<
     tone: "muted",
     blurb: "Not on the marketplace — clients cannot find or book them.",
   },
+  // Same words the client app puts on the card. An admin reading a queue and
+  // a client reading a badge have to be talking about the same thing.
   ID: {
-    label: "ID verified",
+    label: "Verified",
     tone: "active",
     blurb: "Government ID checked. Listed, with the standard badge.",
   },
   BUSINESS: {
-    label: "Business verified",
+    label: "Certified",
     tone: "success",
     blurb:
       "Government ID and business registration both checked. Listed with the strongest badge.",
