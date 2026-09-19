@@ -51,8 +51,8 @@ export async function verifyProvider(
   return successState(
     status === "APPROVED"
       ? approvedTier === "BUSINESS"
-        ? "Business verified — they are live with the strongest badge."
-        : "ID verified — they are live on the marketplace."
+        ? "Certified — they are live with the strongest badge."
+        : "Verified — they are live on the marketplace."
       : "Verification rejected, the provider delisted and notified."
   )
 }
