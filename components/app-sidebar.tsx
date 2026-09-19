@@ -15,6 +15,7 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
   StarIcon,
+  TriangleAlertIcon,
   UsersIcon,
 } from "lucide-react"
 
@@ -80,6 +81,13 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
         label: "Disputes",
         icon: GavelIcon,
         badgeKey: "openDisputes",
+      },
+      // Next to Disputes on purpose: both are money that has stopped moving
+      // and will not start again without someone here.
+      {
+        href: "/settlements",
+        label: "Stuck payouts",
+        icon: TriangleAlertIcon,
       },
       { href: "/reviews", label: "Reviews", icon: StarIcon },
       { href: "/categories", label: "Service catalog", icon: ScissorsIcon },

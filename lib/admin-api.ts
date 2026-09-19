@@ -17,6 +17,7 @@ import type {
   AnalyticsTimeseries,
   Paginated,
   ServiceCategory,
+  StalledSettlementsPage,
   TopClientRow,
   TopProviderRow,
   TransactionPage,
@@ -136,6 +137,18 @@ export function getBookingAudit(id: string) {
 
 export function listTransactions(params: ListParams = {}) {
   return apiFetch<TransactionPage>("/admin/transactions", { query: params })
+}
+
+/**
+ * Settlements the hourly reconciliation sweep has given up on.
+ *
+ * Nothing else surfaces these. After a handful of failures the sweep stops
+ * retrying, which keeps genuinely broken transfers from being hammered
+ * hourly - but it also means a provider stops being paid with nothing
+ * anywhere saying so. This is the only place that says so.
+ */
+export function listStalledSettlements() {
+  return apiFetch<StalledSettlementsPage>("/admin/settlements/stalled")
 }
 
 // ---- Moderation ----
