@@ -484,3 +484,28 @@ export interface TransactionPage extends Paginated<AdminTransactionRow> {
     net: number
   }
 }
+
+/** A settlement the reconciliation sweep has stopped retrying. */
+export interface StalledSettlement {
+  _id: string
+  bookingId: string
+  providerName: string
+  clientName: string
+  serviceName: string
+  amount: number
+  payoutAmount: number
+  payoutStatus: SettlementStatus
+  payoutRetryCount: number
+  refundAmount: number
+  refundStatus: SettlementStatus
+  refundRetryCount: number
+  paystackReference: string
+  createdAt: string
+}
+
+export interface StalledSettlementsPage {
+  items: StalledSettlement[]
+  total: number
+  /** Failures the sweep allows before abandoning a settlement. */
+  maxRetries: number
+}

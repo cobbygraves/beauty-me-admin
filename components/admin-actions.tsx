@@ -10,6 +10,7 @@ import { setUserSuspension, updateUser } from "@/lib/actions/users"
 import { verifyProvider } from "@/lib/actions/providers"
 import { overrideBooking, resolveDispute } from "@/lib/actions/bookings"
 import { deleteReview } from "@/lib/actions/reviews"
+import { retrySettlement } from "@/lib/actions/settlements"
 import { BOOKING_STATUSES, STATUS_META, ROLE_LABELS } from "@/lib/booking"
 import { formatCurrency } from "@/lib/format"
 import type { BookingStatus, Role } from "@/lib/types"
@@ -352,6 +353,43 @@ export function DeleteReviewButton({
           placeholder="Abusive language reported by the provider."
         />
       </DialogField>
+    </ActionDialog>
+  )
+}
+
+/**
+ * Re-drives a settlement the sweep abandoned.
+ *
+ * Confirmed rather than a bare button: the retry itself is cheap, but doing
+ * it before fixing the cause burns the retry budget again and the row
+ * reappears here looking identical, which is how an operator stops trusting
+ * the list.
+ */
+export function RetrySettlementButton({
+  bookingId,
+  providerName,
+  payoutAmount,
+  failures,
+}: {
+  bookingId: string
+  providerName: string
+  payoutAmount: number
+  failures: number
+}) {
+  return (
+    <ActionDialog
+      action={retrySettlement}
+      title="Retry this settlement"
+      description={`This has failed ${failures} times, so automatic retries stopped. Fix the cause first — an empty Paystack balance, a wrong recipient account, or transfer OTP still switched on — then retry to send ${formatCurrency(payoutAmount)} to ${providerName}. Retrying before the cause is fixed just puts it straight back on this list.`}
+      submitLabel="Retry now"
+      pendingLabel="Sending…"
+      trigger={
+        <Button size="sm" variant="outline">
+          Retry
+        </Button>
+      }
+    >
+      <input type="hidden" name="bookingId" value={bookingId} />
     </ActionDialog>
   )
 }
