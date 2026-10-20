@@ -278,9 +278,26 @@ export default async function ProviderDetailPage({
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                {initialsOf(displayName)}
-              </span>
+              {profile.logoUrl ? (
+                <a
+                  href={profile.logoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Open logo full size"
+                  className="shrink-0"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- S3 is not a next/image domain */}
+                  <img
+                    src={profile.logoUrl}
+                    alt={`${displayName} logo`}
+                    className="size-11 rounded-full border object-cover"
+                  />
+                </a>
+              ) : (
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                  {initialsOf(displayName)}
+                </span>
+              )}
               <div className="flex min-w-0 flex-col">
                 <span className="truncate font-medium">{displayName}</span>
                 <span className="truncate text-sm text-muted-foreground">
