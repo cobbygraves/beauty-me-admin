@@ -20,6 +20,7 @@ import {
   VerificationBadge,
 } from "@/components/status-badge"
 import {
+  ClearIdentityHoldButton,
   SuspendUserButton,
   VerifyProviderButtons,
 } from "@/components/admin-actions"
@@ -135,6 +136,50 @@ export default async function ProviderDetailPage({
         ) : null}
         <span className="text-sm text-muted-foreground">{meta.blurb}</span>
       </section>
+
+      {profile.identityHold?.active ? (
+        <Card className="border-destructive/40 bg-destructive/5">
+          <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-1 text-sm">
+              <p className="font-medium">
+                On hold: a client reported someone else turned up
+              </p>
+              <p className="text-muted-foreground">
+                Reported{" "}
+                {profile.identityHold.lastReportedAt
+                  ? formatDateTime(profile.identityHold.lastReportedAt)
+                  : "—"}{" "}
+                · {formatNumber(profile.identityHold.reportCount)} report
+                {profile.identityHold.reportCount === 1 ? "" : "s"} in total.
+                Off the marketplace until cleared.
+              </p>
+              {profile.identityHold.lastBookingId ? (
+                <Link
+                  href={`/bookings/${profile.identityHold.lastBookingId}`}
+                  className="w-fit underline-offset-4 hover:underline"
+                >
+                  View the reported booking
+                </Link>
+              ) : null}
+            </div>
+            <ClearIdentityHoldButton
+              providerId={profile._id}
+              businessName={displayName}
+            />
+          </CardContent>
+        </Card>
+      ) : profile.identityHold?.reportCount ? (
+        <p className="text-sm text-muted-foreground">
+          {formatNumber(profile.identityHold.reportCount)} past identity report
+          {profile.identityHold.reportCount === 1 ? "" : "s"}, cleared
+          {profile.identityHold.clearedAt
+            ? ` ${formatDate(profile.identityHold.clearedAt)}`
+            : ""}
+          {profile.identityHold.clearanceNote
+            ? `: ${profile.identityHold.clearanceNote}`
+            : "."}
+        </p>
+      ) : null}
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatTile

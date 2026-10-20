@@ -7,7 +7,11 @@ import { ActionDialog, DialogField } from "@/components/action-dialog"
 import { CountrySelect } from "@/components/country-select"
 import { countryOfE164, DEFAULT_COUNTRY_ISO, toLocalFormat } from "@/lib/phone"
 import { setUserSuspension, updateUser } from "@/lib/actions/users"
-import { verifyProvider } from "@/lib/actions/providers"
+import {
+  clearIdentityHold,
+  rejectProviderPhoto,
+  verifyProvider,
+} from "@/lib/actions/providers"
 import { overrideBooking, resolveDispute } from "@/lib/actions/bookings"
 import { deleteReview } from "@/lib/actions/reviews"
 import { retrySettlement } from "@/lib/actions/settlements"
@@ -208,6 +212,84 @@ export function VerifyProviderButtons({
   )
 }
 
+/**
+ * Turns down the provider's face photo on its own. Their listing, badge and
+ * any documents still under review are left alone.
+ */
+export function RejectPhotoButton({
+  providerId,
+  businessName,
+}: {
+  providerId: string
+  businessName: string
+}) {
+  return (
+    <ActionDialog
+      action={rejectProviderPhoto}
+      title={`Reject ${businessName}'s photo?`}
+      description="Only the photo is turned down. They keep their listing, badge and anything else under review, and are asked to take a new photo. Your reason is what they see."
+      submitLabel="Reject photo"
+      submitVariant="destructive"
+      pendingLabel="Rejecting…"
+      trigger={
+        <Button variant="outline" size="sm">
+          Reject photo only
+        </Button>
+      }
+    >
+      <input type="hidden" name="providerId" value={providerId} />
+      <DialogField
+        label="Reason"
+        hint="Tell them what to fix — this is all the guidance they get."
+      >
+        <Textarea
+          name="reason"
+          required
+          rows={3}
+          placeholder="Your face is in shadow. Take it facing a window, without sunglasses."
+        />
+      </DialogField>
+    </ActionDialog>
+  )
+}
+
+/**
+ * Clears a client's identity report. There is no "uphold" counterpart: a
+ * provider found to be sending someone else is dealt with by suspending the
+ * account, which is its own button.
+ */
+export function ClearIdentityHoldButton({
+  providerId,
+  businessName,
+}: {
+  providerId: string
+  businessName: string
+}) {
+  return (
+    <ActionDialog
+      action={clearIdentityHold}
+      title={`Clear the hold on ${businessName}?`}
+      description="They go back on the marketplace and can take bookings straight away. Only do this once you are satisfied the right person is doing their jobs."
+      submitLabel="Clear hold"
+      pendingLabel="Clearing…"
+      trigger={<Button variant="outline">Clear hold</Button>}
+    >
+      <input type="hidden" name="providerId" value={providerId} />
+      <DialogField
+        label="What did you check?"
+        hint="Kept on their record. Say who you spoke to and what convinced you."
+      >
+        <Textarea
+          name="note"
+          required
+          rows={3}
+          placeholder="Called the client and the provider. Client had the wrong address; the provider matched their photo on a video call."
+        />
+      </DialogField>
+    </ActionDialog>
+  )
+}
+
 export function OverrideBookingButton({
   bookingId,
   currentStatus,
@@ -273,13 +355,62 @@ export function ResolveDisputeButton({
   clientName,
   payoutAmount,
   price,
+  transportFee = 0,
+  identityReport = false,
 }: {
   bookingId: string
   providerName: string
   clientName: string
   payoutAmount: number
   price: number
+  transportFee?: number
+  /**
+   * The dispute came from "this isn't my provider". Nothing has been charged
+   * or paid out yet, and the two rulings split the money differently.
+   */
+  identityReport?: boolean
 }) {
+  if (identityReport) {
+    return (
+      <ActionDialog
+        action={resolveDispute}
+        title="Rule on this identity report"
+        description={`${clientName} said the person who arrived was not ${providerName}. If ${clientName} is right, they get all ${formatCurrency(price + transportFee)} back and ${providerName} gets nothing. If ${providerName} did attend, it settles as a late cancellation: ${providerName} gets the transport and the late-cancellation fee, and the rest is refunded. Upholding the client also keeps the report on ${providerName}'s record; two standing reports pause them. Neither ruling can be undone once the money moves.`}
+        submitLabel="Apply ruling"
+        submitVariant="destructive"
+        pendingLabel="Applying…"
+        trigger={<Button size="sm">Resolve</Button>}
+      >
+        <input type="hidden" name="bookingId" value={bookingId} />
+        <DialogField label="Who was at the door?">
+          <select
+            name="resolution"
+            defaultValue="REFUNDED"
+            className={SELECT_CLASSES}
+          >
+            <option value="REFUNDED" className="bg-background text-foreground">
+              Not the provider: refund {clientName} in full
+            </option>
+            <option value="RELEASED" className="bg-background text-foreground">
+              The booked provider: settle as a late cancellation
+            </option>
+          </select>
+        </DialogField>
+        <DialogField
+          label="Note"
+          hint="At least 8 characters. Written to the booking's permanent history."
+        >
+          <Textarea
+            name="note"
+            required
+            rows={3}
+            placeholder="Video call with the provider matched their photo; client confirmed the person had left before they checked."
+          />
+        </DialogField>
+      </ActionDialog>
+    )
+  }
+
   return (
     <ActionDialog
       action={resolveDispute}

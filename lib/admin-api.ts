@@ -75,6 +75,8 @@ export function getAdminActivity() {
 
 export interface QueueCounts {
   pendingVerifications: number
+  /** Providers paused by a client's "this isn't my provider" report. */
+  identityHolds: number
   paymentsNeedingAttention: number
   openDisputes: number
   activeBookings: number

@@ -21,7 +21,16 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider>
-      <AppSidebar user={user} badges={queue} />
+      {/* Identity reports are reviewed on the Verification page, so they
+          count towards its badge. */}
+      <AppSidebar
+        user={user}
+        badges={{
+          ...queue,
+          pendingVerifications:
+            queue.pendingVerifications + queue.identityHolds,
+        }}
+      />
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/80 px-4 backdrop-blur-sm">
           <SidebarTrigger />
