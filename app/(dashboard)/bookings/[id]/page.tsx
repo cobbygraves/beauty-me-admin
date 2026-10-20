@@ -125,6 +125,8 @@ export default async function BookingDetailPage({
                 clientName={client?.username ?? "the client"}
                 payoutAmount={booking.payoutAmount}
                 price={booking.price}
+                transportFee={booking.transportFee}
+                identityReport={Boolean(booking.identityReport)}
               />
             ) : null}
             <OverrideBookingButton

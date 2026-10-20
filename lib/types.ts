@@ -99,10 +99,33 @@ export interface ProviderVerification {
   idDocumentUrl?: string | null
   licenseDocumentUrl?: string | null
   licenseNumber?: string | null
+  /** Face photo sent with this submission — compare it with the ID. */
+  photoUrl?: string | null
+  /** Set when an admin turned down the last photo on its own. */
+  photoRejectionReason?: string | null
   status: VerificationStatus
   approvedTier: VerificationTier
   rejectionReason?: string | null
   reviewedAt?: string | null
+}
+
+/**
+ * Set when a client reports that someone else turned up. While `active` the
+ * provider is off the marketplace and cannot be booked.
+ */
+export interface ProviderIdentityHold {
+  active: boolean
+  /** Lifetime count — survives clears so a pattern stays visible. */
+  reportCount: number
+  /**
+   * Reports still standing (open, or upheld for the client) since the last
+   * clear. Two of them pause the provider.
+   */
+  activeReportCount?: number
+  lastReportedAt?: string | null
+  lastBookingId?: string | null
+  clearedAt?: string | null
+  clearanceNote?: string | null
 }
 
 export interface GeoPoint {
@@ -121,6 +144,9 @@ export interface ProviderProfile {
   services: ProviderServiceItem[]
   portfolio: PortfolioItem[]
   verification: ProviderVerification
+  /** The approved face photo clients see. Set only by approving verification. */
+  photoUrl?: string | null
+  identityHold?: ProviderIdentityHold
   location: GeoPoint
   isOnline: boolean
   avgRating: number
@@ -170,6 +196,8 @@ export interface Booking {
   serviceId: string
   serviceName: string
   price: number
+  /** Round-trip travel charge. Absent on older bookings. */
+  transportFee?: number
   durationMinutes: number
   status: BookingStatus
   scheduledAt: string
@@ -202,6 +230,18 @@ export interface Booking {
   payoutDisputeReason?: string | null
   payoutDisputeResolution?: PayoutDisputeResolution
   payoutReminderSentAt?: string | null
+  /**
+   * The client said the person who arrived was not the provider. It opens a
+   * dispute like any other, but the ruling settles differently - see
+   * ResolveDisputeButton.
+   */
+  identityReport?: {
+    reportedAt: string
+    reportedInStatus: BookingStatus
+    details?: string | null
+  } | null
+  /** The client confirmed at booking that they would be there in person. */
+  attendanceConfirmed?: boolean
   createdAt?: string
   updatedAt?: string
 }
@@ -253,6 +293,8 @@ export interface AdminProviderRow {
   reviewCount: number
   payoutVerified: boolean
   verification: ProviderVerification
+  photoUrl?: string | null
+  identityHold?: ProviderIdentityHold
   services: ProviderServiceItem[]
   categories: string[]
   activeServices: number
