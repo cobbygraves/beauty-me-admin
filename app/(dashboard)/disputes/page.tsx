@@ -116,6 +116,8 @@ export default async function DisputesPage({
                         clientName={booking.clientName}
                         payoutAmount={booking.payoutAmount}
                         price={booking.price}
+                        transportFee={booking.transportFee}
+                        identityReport={Boolean(booking.identityReport)}
                       />
                     </TableCell>
                   </TableRow>
