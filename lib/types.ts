@@ -144,6 +144,8 @@ export interface ProviderProfile {
   services: ProviderServiceItem[]
   portfolio: PortfolioItem[]
   verification: ProviderVerification
+  /** Optional logo the provider sets; leads on marketplace cards. */
+  logoUrl?: string | null
   /** The approved face photo clients see. Set only by approving verification. */
   photoUrl?: string | null
   identityHold?: ProviderIdentityHold
@@ -293,6 +295,7 @@ export interface AdminProviderRow {
   reviewCount: number
   payoutVerified: boolean
   verification: ProviderVerification
+  logoUrl?: string | null
   photoUrl?: string | null
   identityHold?: ProviderIdentityHold
   services: ProviderServiceItem[]
